@@ -1,4 +1,6 @@
 
+//Hola este es un comentario del senior Joseph XD
+
 //PUERTOS DEFINIDOS ANTERIOR MENTE EN EL ARDUINO MEGA Y DIAGRAMA DE COMBINACIONES
 //                   5,  2,  7,  1,  e,  8,  c,  h
 int portColums[] = {30, 24, 34, 22, 31, 36, 27, 37};
