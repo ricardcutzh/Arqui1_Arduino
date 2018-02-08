@@ -6,6 +6,13 @@ int portColums[] = {30, 24, 34, 22, 31, 36, 27, 37};
 //                 a,  b,  f,  6,  g,  4,  3,  d
 int portRows[] = {23, 25, 33, 32, 35, 28, 26, 29};
 
+//VARIABLE QUE IDENTIFICA LA POSICION
+int posicion;
+//VARIABLE QUE IDENTIFICA LA MODALIDAD
+int modo;
+//VARIABLE QUE MANEJA LA VELOCIDA
+int velocidad;
+
 //MATRIZ GLOBAL
 int matrizTrans[8][8] = 
 {
@@ -62,36 +69,53 @@ int MA[4][6]={
 
 void setup() {
   // put your setup code here, to run once:
+  Serial.begin(9600);
   init_setup();
   setColumns();
   setRows();
-  
+  pinMode(50,INPUT);
+  int posicion = -4;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
-  /*interpreta_matriz_minima(3,MA);
-  delay(500);
-  interpreta_matriz_minima(1,MA);*/
-  //delay(500);
-  //interpreta_matriz(A);
-  for(int x = 0; x<8; x++)
+  /*for(int x = -4; x<8; x++)
   {
-    correLetra(A,x);
+    correLetra_Derecha(A,x);
     delay(5);
   }
   delay(5);
-  for(int x = 0; x<8; x++)
+  for(int x = 11; x>=0; x--)
   {
-    correLetra(N1,x);
+    correLetra_Izquierda(A,x);
     delay(5);
+  }*/
+  if(digitalRead(50)==HIGH)
+  {
+    correLetra_Derecha(P,posicion-1);
+    posicion++;
+    if(posicion>8 || posicion< -4)
+    {
+      posicion = -4;
+    }
   }
-  delay(5);
-  for(int x = 0; x<8; x++)
+  else
   {
-    correLetra(C,x);
-    delay(5);
+    int pos2 = posicion - 5;
+    clearMatrix();
+    correLetra_Izquierda(P,posicion);
+    posicion--;
+    if(posicion>=11 || posicion < 0)
+    {
+      posicion = 11;
+    }
+   /* 
+    correLetra_Izquierda(P,pos2);
+    pos2--;
+    if(pos2>=11 || pos2 < 0)
+    {
+      pos2 = 11;
+    }*/
   }
 }
 
@@ -120,7 +144,8 @@ void interpreta_matriz(int matriz[8][8])
   }
 }
 
-void correLetra(int letra[4][8], int colinicio)
+//CORRE LA LETRA HACIA LA DERECHA
+void correLetra_Derecha(int letra[4][8], int colinicio)
 {
   clearMatrix();
   int colfinal = colinicio+4;
@@ -139,6 +164,28 @@ void correLetra(int letra[4][8], int colinicio)
   interpreta_matriz(matrizTrans);
 }
 
+//CORRE LA LETRA HACIA LA IZQUIERDA
+void correLetra_Izquierda(int letra[4][8], int colinicio)
+{
+  
+  int colfinal = colinicio-4;
+  if(colfinal <= 0)
+  {
+    colfinal = 0;
+  }
+  for(int col = colinicio; col >= colfinal; col--)
+  {
+    
+    for(int fil = 0; fil < 8; fil++)
+    {
+      matrizTrans[col][fil] = letra[colinicio-col][fil];
+    }
+    
+  }
+  interpreta_matriz(matrizTrans);
+}
+
+//PARA VER LA MATRIZ EN EL PUERTO SERIAL
 void printMatrix()
 {
   Serial.begin(9600);
@@ -154,6 +201,7 @@ void printMatrix()
   Serial.println("---------------------------------------------");
 }
 
+//VACIA LA MATRIZ
 void clearMatrix()
 {
   for(int col = 0; col < 8; col++)
@@ -165,40 +213,6 @@ void clearMatrix()
     }
   }
 }
-
-//Metodo que interpreta la matriz minima, y recibe como parametro la columna inicial
-
-void interpreta_matriz_minima(int columnaInicio,int matriz[4][6])
-{
-  for(int x = 0;x <2000; x++)
-  {
-    int ancho=4;
-/*
-    if(columnaInicio+4>8){
-      ancho=8-columnaInicio;
-      }*/
-      
-  for(int col = columnaInicio; col < ancho; col++)
-  {
-    digitalWrite(portColums[col],HIGH);
-    for(int fil = 1; fil < 7; fil++)
-    {
-
-      if(matriz[col][fil]==1)
-      {
-        digitalWrite(portRows[fil], LOW);
-      }
-    }
-    //delay(5);
-    digitalWrite(portColums[col],LOW);
-    setRows();
-    //delay(5000);
-  }
-  }
-  
-}
-
-
 
 //METODO QUE SE ENCARGA DE SETEAR DE INICIO LA MODALIDAD DE LOS PINES A UTILIZAR
 void init_setup()
