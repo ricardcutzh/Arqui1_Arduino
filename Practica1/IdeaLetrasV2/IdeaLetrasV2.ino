@@ -1,4 +1,6 @@
-
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 //PUERTOS DEFINIDOS ANTERIOR MENTE EN EL ARDUINO MEGA Y DIAGRAMA DE COMBINACIONES
 //                   5,  2,  7,  1,  e,  8,  c,  h
 int portColums[] = {30, 24, 34, 22, 31, 36, 27, 37};
@@ -37,6 +39,12 @@ int BLANK[4][8] = {
               {0,0,0,0,0,0,0,0},
               {0,0,0,0,0,0,0,0}
             };
+int GUION[4][8] = {
+              {0,0,0,1,1,0,0,0},
+              {0,0,0,1,1,0,0,0},
+              {0,0,0,1,1,0,0,0},
+              {0,0,0,1,1,0,0,0}
+            };
 int AST[4][8] = {
               {0,0,1,0,1,0,1,0},
               {0,0,0,1,1,1,0,0},
@@ -59,10 +67,10 @@ int B[4][8] = {
             };
 /*----------------------------*/
 int C[4][8] = {
-              {0,1,1,1,1,1,1,0},
+              {0,0,1,1,1,1,0,0},
               {0,1,0,0,0,0,1,0},
               {0,1,0,0,0,0,1,0},
-              {0,1,1,0,0,1,0,0}
+              {0,0,1,0,0,1,0,0}
             };
 /*----------------------------*/
 int D[4][8] = {
@@ -212,6 +220,26 @@ int Y[4][8] = {
               {0,1,1,1,1,0,0,0},
               {0,0,0,0,0,1,1,0}
             };
+int N1[4][8] = {
+              {0,1,0,0,1,0,0,0},
+              {0,1,0,0,0,1,0,0},
+              {0,1,1,1,1,1,1,0},
+              {0,1,0,0,0,0,0,0}
+            };
+int N7[4][8] = {
+              {0,0,0,0,0,0,1,0},
+              {0,0,0,0,1,0,1,0},
+              {0,1,1,1,1,1,1,0},
+              {0,0,0,0,0,0,0,0}
+            };
+int N2[4][8] = {
+              {0,1,1,1,0,1,0,0},
+              {0,1,0,1,0,0,1,0},
+              {0,1,0,0,1,0,1,0},
+              {0,1,1,0,0,1,0,0}
+            };
+char letras[] = "HOLA-MUNDO";
+int len = sizeof(letras)/sizeof(char);      
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -219,7 +247,7 @@ void setup() {
   setColumns();
   setRows();
   pinMode(50,INPUT);
-  cantidad = 10;
+  cantidad = len;
   definirLimites(cantidad,digitalRead(50));
   posicion = posinicio;
 }
@@ -245,16 +273,11 @@ void loop() {
       posicion = posinicio;
     }
   }
-  correLetra(H,posicion);
-  correLetra(O,posicion+5);
-  correLetra(L,posicion+10);
-  correLetra(A,posicion+15);
-  correLetra(BLANK,posicion+20);
-  correLetra(M,posicion+25);
-  correLetra(U,posicion+30);
-  correLetra(N,posicion+35);
-  correLetra(D,posicion+40);
-  correLetra(O,posicion+45);
+  for(int x = 0; x < len; x++)
+  {
+    char l = letras[x];
+    selecciona_Letra(l,posicion + (x*5));
+  }
   interpreta_matriz(matrizTrans);
   clearMatrix();
 }
@@ -300,7 +323,7 @@ void definirLimites(int numeroLetras, int direccion)
 //METODO QUE SE ENCARGA DE INTERPRETAR UNA MATRIZ QUE DEFINE LA SALIDA DE LOS LEDS
 void interpreta_matriz(int matriz[8][8])
 {
-  for(int x = 0;x <500; x++)
+  for(int x = 0;x <400; x++)
   {
     for(int col = 0; col < 8; col++)
     {
@@ -395,6 +418,68 @@ void setRows()
   {
     digitalWrite(portRows[x], HIGH);
   }
+}
+
+void selecciona_Letra(char letra, int pos)
+{
+  if('-'==letra)
+  {correLetra(GUION,pos);return;}
+  if('*'==letra)
+  {correLetra(AST,pos);return;}
+  if('A'==letra)
+  {correLetra(A,pos);return;}
+  if('B'==letra)
+  {correLetra(B,pos);return;}
+  if('C'==letra)
+  {correLetra(C,pos);return;}
+  if('D'==letra)
+  {correLetra(D,pos);return;}
+  if('E'==letra)
+  {correLetra(E,pos);return;}
+  if('F'==letra)
+  {correLetra(F,pos);return;}
+  if('G'==letra)
+  {correLetra(G,pos);return;}
+  if('H'==letra)
+  {correLetra(H,pos);return;}
+  if('I'==letra)
+  {correLetra(I,pos);return;}
+  if('J'==letra)
+  {correLetra(J,pos);return;}
+  if('K'==letra)
+  {correLetra(K,pos);return;}
+  if('L'==letra)
+  {correLetra(L,pos);return;}
+  if('M'==letra)
+  {correLetra(M,pos);return;}
+  if('N'==letra)
+  {correLetra(N,pos);return;}
+  if('O'==letra)
+  {correLetra(O,pos);return;}
+  if('P'==letra)
+  {correLetra(P,pos);return;}
+  if('Q'==letra)
+  {correLetra(Q,pos);return;}
+  if('R'==letra)
+  {correLetra(R,pos);return;}
+  if('S'==letra)
+  {correLetra(S,pos);return;}
+  if('T'==letra)
+  {correLetra(T,pos);return;}
+  if('U'==letra)
+  {correLetra(U,pos);return;}
+  if('V'==letra)
+  {correLetra(V,pos);return;}
+  if('W'==letra)
+  {correLetra(W,pos);return;}
+  if('Y'==letra)
+  {correLetra(Y,pos);return;}
+  if('1'==letra)
+  {correLetra(N1,pos);return;}
+  if('7'==letra)
+  {correLetra(N7,pos);return;}
+  if('2'==letra)
+  {correLetra(N2,pos);return;}
 }
 /**************************************************************/
 
