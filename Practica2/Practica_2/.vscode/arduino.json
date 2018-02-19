@@ -1,0 +1,6 @@
+{
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560",
+    "sketch": "Practica_2.ino",
+    "port": "/dev/ttyACM1"
+}
