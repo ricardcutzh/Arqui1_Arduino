@@ -67,6 +67,7 @@ int devuelveAngulo2()
 
 /////////////////////////////////////////////////////
 Timer tm;
+Timer tm2;
 int tiempo;
 typedef struct Nodo{
   int pos1;
@@ -93,6 +94,7 @@ void setup() {
   setting_buttons();
   setting_matrix();
   tm.every(1000,actualiza);
+  tm2.every(10, poneFlechas);
   pinMode(50, OUTPUT);
   Serial.begin(9600);
   llevaAHome();
@@ -115,15 +117,26 @@ void loop() {
      if(movimientos.Count()>0)
      {
        //ENCIENDO LOS SERVOS
+       int actual = 0;
        servo1.attach(S1Escritura);
        servo2.attach(S2Escritura);
        for(int x = 0; x < movimientos.Count(); x++)
        {
-         correLetra(BLANK, 0);
-         correLetra(BLANK, 5);
+         if(movimientos[x].pos1 > actual)
+         {
+           correLetra(FI1,0);
+           correLetra(FI2,5);
+         }
+         else
+         {
+           correLetra(FD1,0);
+           correLetra(FD2,5);
+         }
+         actual = movimientos[x].pos1;
          num.mostrar(x+1);
+         tm2.update();
          servo1.write(movimientos[x].pos1);
-         delay(500);
+         delay(30);
          servo2.write(movimientos[x].pos2);
          delay(3000);
        }
@@ -149,3 +162,7 @@ void llevaAHome()
   servo2.write(5);
 }
 
+void poneFlechas()
+{
+  interpreta_matriz(matrizTrans,500);
+}
