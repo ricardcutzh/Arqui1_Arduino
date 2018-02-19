@@ -1,36 +1,36 @@
 #include <Servo.h>
 
 Servo servo1;
-int ser = 6;
+int S1Escritura = 6;
+int S1VCC = 7;
+int P1Lectura = A2;
 
-int controlMotor;
+Servo servo2;
+int S2Escritura = 4;
+int S2VCC = 5;
+int P2Lectura = A1;
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(2,OUTPUT);
-  digitalWrite(2,HIGH);
-  pinMode(A1, INPUT);
-  servo1.attach(ser);
-  pinMode(3,INPUT);
-  controlMotor = digitalRead(3);
-  Serial.begin(9600); 
+  servo1.attach(S1Escritura);
+  pinMode(S1VCC, OUTPUT);
+  digitalWrite(S1VCC, HIGH);
+  Serial.begin(9600);
+
+  servo2.attach(S2Escritura);
+  pinMode(S2VCC, OUTPUT);
+  digitalWrite(S2VCC,LOW);
+  //servo1.detach();
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  controlMotor = digitalRead(3);
-  if(controlMotor == LOW)
-  {
-    digitalWrite(2, LOW);
-  }
-  else{
-    digitalWrite(2,HIGH);
-  }
-  int val = analogRead(A1);
-  int angulo = map(val,0,1023,180,0);
-  Serial.println(angulo,DEC);
+  int val = analogRead(P1Lectura);
+  //int angulo = map(val,0,1023,180,0);
+  val = map(val, 0, 1023, 0, 180); 
+  Serial.println(val,DEC);
   servo1.write(160);
-  delay(2000);
-
+  //servo2.write(160);
   
+  delay(2000);  
 }

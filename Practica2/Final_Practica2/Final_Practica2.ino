@@ -30,33 +30,39 @@ Numero num(38,40,42,44,39,41,43,45);
 ////////////DEFINICION DE SERVOMOTORES///////////////
 //---------------------------------------------------
 Servo servo1;
-int ser1VCC = 7;
-int ser1Pin = 6;
-int analogoSer1 = A1;
-void setting_motor1()
+int S1Escritura = 6;
+int P1Lectura = A2;
+int devuelveAngulo1()
 {
-  pinMode(ser1VCC, OUTPUT);
-  servo1.attach(ser1Pin);
-  digitalWrite(ser1VCC, LOW);
-}
-int obtenerValor1()
-{
-  int val = analogRead(analogoSer1);
-  int angulo = map(val,0,1023,180,0);
-  int ang = calcula_movimiento(angulo);
-  Serial.println(ang);
-  return ang;
+  int val = analogRead(P1Lectura);
+  val = map(val, 0, 1023, 0, 180);
+  if(val < 16)
+  {
+    val = 16;
+  }
+  int angulo = -18.62184+(1.44706*val);
+  if(angulo < 5){ angulo = 5;}
+  if(angulo > 160){ angulo = 160;}
+  return angulo;
 }
 //---------------------------------------------------
-int calcula_movimiento(int angulo)
+Servo servo2;
+int S2Escritura = 4;
+int P2Lectura = A1;
+int devuelveAngulo2()
 {
-  
-  int res = 240.39708-(1.42636*angulo);
-  if(res < 9){return 10;}
-  if(res > 155) {return 155;}
-  return res;
+  int val = analogRead(P2Lectura);
+  val = map(val, 0, 1023, 0, 180);
+  if(val < 2)
+  {
+    val = 2;
+  }
+  int angulo = -2.87951+(1.40329*val);
+  if(angulo < 0){ angulo = 0;}
+  if(angulo > 160){ angulo = 160;}
+  return angulo;
 }
-//---------------------------------------------------
+//--------------------------------------------------
 /////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////
@@ -74,8 +80,8 @@ void actualiza()
   if(tiempo == 11){
     tiempo = 0; digitalWrite(50,HIGH); delay(300); digitalWrite(50,LOW);
     Nodo *n = new Nodo;
-    n->pos1 = 0;
-    n->pos2 = 0;
+    n->pos1 = devuelveAngulo1();
+    n->pos2 = devuelveAngulo2();
     movimientos.Add(*n);
     //movimientos.Add(obtenerValor1());
     muestraNumero(movimientos.Count());
@@ -84,12 +90,12 @@ void actualiza()
 /////////////////////////////////////////////////////
 
 void setup() {
-  setting_motor1();
   setting_buttons();
   setting_matrix();
   tm.every(1000,actualiza);
   pinMode(50, OUTPUT);
   Serial.begin(9600);
+  llevaAHome();
 }
 
 void loop() {
@@ -97,6 +103,7 @@ void loop() {
    if(digitalRead(btnA)==HIGH && digitalRead(btnB) == HIGH)
    {
      //SI REGRESA O ESTA ESPERANDO A PODER EJECUTAR LOS MOVIMIENTOS SI HAY
+     llevaAHome();
      num.mostrar(0);
      correLetra(A, 0);
      correLetra(N7,5);
@@ -107,11 +114,17 @@ void loop() {
      //SI HAY MOVIMIENTOS EN LA LISTA LOS MOSTRAREMOS
      if(movimientos.Count()>0)
      {
+       //ENCIENDO LOS SERVOS
+       servo1.attach(S1Escritura);
+       servo2.attach(S2Escritura);
        for(int x = 0; x < movimientos.Count(); x++)
        {
          correLetra(BLANK, 0);
          correLetra(BLANK, 5);
-         num.mostrar(x);
+         num.mostrar(x+1);
+         servo1.write(movimientos[x].pos1);
+         delay(500);
+         servo2.write(movimientos[x].pos2);
          delay(3000);
        }
        movimientos.Clear();
@@ -121,9 +134,18 @@ void loop() {
    if(digitalRead(btnA)==LOW)
    {
      //DEBERIA DE EMPEZAR A GUARDAR LOS MOVIMIENTOS
+     servo1.detach();
+     servo2.detach();
      tm.update();
    }
    
 }
 
+void llevaAHome()
+{
+  servo1.attach(S1Escritura);
+  servo2.attach(S2Escritura);
+  servo1.write(0);
+  servo2.write(5);
+}
 
