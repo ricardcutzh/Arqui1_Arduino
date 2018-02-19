@@ -568,6 +568,9 @@ void Numero::mostrar(int numero)
 {
   switch(numero)
   {
+    case 0:
+      cero();
+      break;
     case 1:
       uno();
       break;

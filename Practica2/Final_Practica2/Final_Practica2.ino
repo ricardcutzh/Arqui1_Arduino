@@ -62,18 +62,23 @@ int calcula_movimiento(int angulo)
 /////////////////////////////////////////////////////
 Timer tm;
 int tiempo;
-typedef struct nodo{
-  int valMotor1;
-  int valMotor2;
-}nodo;
-List<int> movimientos;
+typedef struct Nodo{
+  int pos1;
+  int pos2;
+}Nodo;
+List<Nodo> movimientos;
 void actualiza()
 {
   tiempo++;
+  num.mostrar(tiempo);
   if(tiempo == 11){
     tiempo = 0; digitalWrite(50,HIGH); delay(300); digitalWrite(50,LOW);
-    movimientos.Add(obtenerValor1());
-    num.mostrar(movimientos.Count());
+    Nodo *n = new Nodo;
+    n->pos1 = 0;
+    n->pos2 = 0;
+    movimientos.Add(*n);
+    //movimientos.Add(obtenerValor1());
+    muestraNumero(movimientos.Count());
   }
 }
 /////////////////////////////////////////////////////
@@ -88,15 +93,35 @@ void setup() {
 }
 
 void loop() {
+  interpreta_matriz(matrizTrans, 1000);
    if(digitalRead(btnA)==HIGH && digitalRead(btnB) == HIGH)
    {
+     //SI REGRESA O ESTA ESPERANDO A PODER EJECUTAR LOS MOVIMIENTOS SI HAY
+     num.mostrar(0);
      correLetra(A, 0);
      correLetra(N7,5);
      interpreta_matriz(matrizTrans, 500);
    }
+   if(digitalRead(btnA)== HIGH && digitalRead(btnB) == LOW)
+   {
+     //SI HAY MOVIMIENTOS EN LA LISTA LOS MOSTRAREMOS
+     if(movimientos.Count()>0)
+     {
+       for(int x = 0; x < movimientos.Count(); x++)
+       {
+         correLetra(BLANK, 0);
+         correLetra(BLANK, 5);
+         num.mostrar(x);
+         delay(3000);
+       }
+       movimientos.Clear();
+     }
+     //DE LO CONTRARIO NO HAREMOS NADA
+   }
    if(digitalRead(btnA)==LOW)
    {
      //DEBERIA DE EMPEZAR A GUARDAR LOS MOVIMIENTOS
+     tm.update();
    }
    
 }
